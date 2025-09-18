@@ -13,12 +13,13 @@
             --card-bg: #ffffff;
             --border-glow: rgba(0, 123, 255, 0.4);
             --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
             background-color: var(--bg-color);
             color: var(--text-color);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: var(--font-family);
             margin: 0;
             padding: 0;
             line-height: 1.6;
@@ -28,12 +29,17 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 2rem;
+            overflow: hidden;
         }
 
         header {
             text-align: center;
             padding: 4rem 0;
-            animation: fadeInDown 1s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 60vh;
         }
         
         .intro-content {
@@ -41,6 +47,7 @@
             align-items: center;
             justify-content: center;
             gap: 2rem;
+            flex-direction: column;
         }
 
         .profile-photo {
@@ -50,21 +57,31 @@
             object-fit: cover;
             border: 4px solid var(--primary-color);
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            transition: opacity 0.6s ease-in-out, transform 0.4s ease;
+            opacity: 0;
         }
-
-        header h1 {
-            font-size: 3.5rem;
+        
+        .header-text, .header-description {
+            display: inline-block;
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre;
+            margin: 0;
+            opacity: 0;
+        }
+        
+        .header-text {
             color: var(--secondary-color);
             text-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 0.5rem;
+            font-size: 3.5rem;
         }
 
-        header p {
-            font-size: 1.5rem;
+        .header-description {
             color: var(--primary-color);
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            font-size: 1.5rem;
         }
-
-        /* General Section Styling */
+        
+        /* General Section Styling & Animations */
         section {
             background-color: var(--card-bg);
             border-radius: 15px;
@@ -72,9 +89,6 @@
             margin-bottom: 2rem;
             box-shadow: var(--shadow);
             transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.8s ease-in-out;
-        }
-
-        .section-hidden {
             opacity: 0;
             transform: translateY(50px);
         }
@@ -98,10 +112,10 @@
             font-size: 1.2rem;
             text-align: justify;
         }
+ 
 
-        /* Skills Section - Unique Design */
+        /* Skills Section - Unique Dispersal Animation */
         .skills-container {
-            position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -110,34 +124,26 @@
             padding: 2rem 0;
         }
         
-        .skills-container::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 90%;
-            height: 90%;
-            border: 2px dashed var(--primary-color);
-            border-radius: 50%;
-            pointer-events: none;
-            opacity: 0.2;
-            animation: rotate 20s linear infinite;
-        }
-
         .skill-item {
             width: 100px;
             height: 100px;
-            background-color: var(--card-bg);
+            background-color: var(--bg-color);
             border-radius: 50%;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: transform 0.6s ease, box-shadow 0.3s ease, color 0.3s ease, opacity 0.6s ease;
             position: relative;
             z-index: 1;
+            opacity: 0;
+            transform: scale(0.5);
+        }
+
+        .skill-item.show {
+            opacity: 1;
+            transform: scale(1);
         }
 
         .skill-item:hover {
@@ -150,6 +156,70 @@
             font-size: 2rem;
             margin-bottom: 0.5rem;
             color: var(--secondary-color);
+        }
+        
+        /* Disperse Animation Classes */
+        .skill-disperse {
+            transition: all 0.5s ease-in-out;
+        }
+        .skill-item:nth-child(odd).skill-disperse {
+            transform: translateY(-50px) translateX(-50px) scale(0.5);
+            opacity: 0;
+        }
+        .skill-item:nth-child(even).skill-disperse {
+            transform: translateY(-50px) translateX(50px) scale(0.5);
+            opacity: 0;
+        }
+
+        /* Projects Pop-up (Modal) Styling */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out;
+            z-index: 1000;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 15px;
+            max-width: 800px;
+            color: var(--text-color);
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.3s ease-in-out;
+        }
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+        .modal-content h3 {
+            color: var(--primary-color);
+            margin-top: 0;
+        }
+        .modal-content p {
+            font-size: 1rem;
+        }
+        .modal-close-btn {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 2rem;
+            cursor: pointer;
         }
 
         /* Experience and Projects Section */
@@ -165,6 +235,7 @@
             padding: 1.5rem;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
         }
 
         .item-card:hover {
@@ -185,7 +256,8 @@
 
         .project-tags {
             font-style: italic;
-            color: #666;
+            color: #444;
+            font-weight: 500;
         }
 
         /* Contact Section */
@@ -208,29 +280,46 @@
             text-shadow: 0 0 10px var(--secondary-color);
         }
 
-        /* Animations */
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-50px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes rotate {
-            from { transform: translate(-50%, -50%) rotate(0deg); }
-            to { transform: translate(-50%, -50%) rotate(360deg); }
-        }
-
         /* Media Queries for Responsiveness */
         @media (max-width: 768px) {
             header h1 { font-size: 2.5rem; }
             header p { font-size: 1.2rem; }
             h2 { font-size: 2rem; }
-            .skills-container { padding: 1rem 0; }
             
             .intro-content {
                 flex-direction: column;
                 gap: 1rem;
             }
         }
+               .header-text.typing, .header-description.typing {
+    opacity: 1;
+}
+/* Typing cursor effect */
+.header-text.typing::after,
+.header-description.typing::after {
+    content: '|';
+    display: inline-block;
+    margin-left: 2px;
+    animation: blink 0.7s infinite;
+    color: var(--secondary-color);
+}
+
+@keyframes blink {
+    0%, 50%, 100% { opacity: 1; }
+    25%, 75% { opacity: 0; }
+}
+
+.header-text.typing-complete::after,
+.header-description.typing-complete::after {
+    content: ''; /* remove cursor after typing finishes */
+
+}
+.header-description {
+    display: block;   /* forces new line */
+    margin-top: 8px;  /* little spacing below your name */
+}
+
+
     </style>
 </head>
 <body>
@@ -239,133 +328,218 @@
             <div class="intro-content">
                 <img src="sanath.jpg" alt="Sanath Yergol" class="profile-photo">
                 <div>
-                    <h1>Sanath Yergol</h1>
-                    <p>A 2025 CSE graduate from Ballari Institute of Technology and Management</p>
+                    <h1 id="headerText" class="header-text"></h1>
+                    <p id="headerDescription" class="header-description"></p>
                 </div>
             </div>
         </header>
 
-        <section class="about-me section-hidden">
-            <h2>About Me</h2>
-            <p>
-                I am a passionate and dedicated Computer Science and Engineering graduate with a strong foundation in deployment, cloud, and orchestration. My internship at Accenture provided hands-on experience in building robust solutions and collaborating with cross-functional teams. I'm a quick learner with a drive for problem-solving and a keen interest in leveraging DevOps principles to create efficient, scalable systems. I have a passion for creating unique and beautiful web applications that push the boundaries of conventional design, and my next goal is to expand my skills in AWS.
-            </p>
-        </section>
+        <main>
+            <section class="about-me">
+                <h2>About Me</h2>
+                <p>
+                    I am a passionate and dedicated Computer Science and Engineering graduate with a strong foundation in deployment, cloud, and orchestration. My internship at Accenture provided hands-on experience in building robust solutions and collaborating with cross-functional teams. I'm a quick learner with a drive for problem-solving and a keen interest in leveraging DevOps principles to create efficient, scalable systems. I have a passion for creating unique and beautiful web applications that push the boundaries of conventional design, and my next goal is to expand my skills in AWS.
+                </p>
+            </section>
 
-        <section class="skills section-hidden">
-            <h2>Technical Skills</h2>
-            <div class="skills-container">
-                <div class="skill-item">
-                    <span class="skill-icon">🐍</span>Python
+            <section class="skills">
+                <h2>Technical Skills</h2>
+                <div class="skills-container">
+                    <div class="skill-item">
+                        <span class="skill-icon">🐍</span>Python
+                    </div>
+                    <div class="skill-item">
+                        <span class="skill-icon">🌐</span>Flask
+                    </div>
+                    <div class="skill-item">
+                        <span class="skill-icon">💻</span>JavaScript
+                    </div>
+                    <div class="skill-item">
+                        <span class="skill-icon">🎨</span>HTML/CSS
+                    </div>
+                    <div class="skill-item">
+                        <span class="skill-icon">🗄️</span>MySQL
+                    </div>
+                    <div class="skill-item">
+                        <span class="skill-icon">📦</span>Docker
+                    </div>
+                    <div class="skill-item">
+                        <span class="skill-icon">🚢</span>Kubernetes
+                    </div>
+                    <div class="skill-item">
+                        <span class="skill-icon">🐝</span>Swarm
+                    </div>
+                    <div class="skill-item">
+                        <span class="skill-icon">🤖</span>Gemini AI
+                    </div>
+                    <div class="skill-item">
+                        <span class="skill-icon">⚙️</span>Gunicorn
+                    </div>
                 </div>
-                <div class="skill-item">
-                    <span class="skill-icon">🌐</span>Flask
-                </div>
-                <div class="skill-item">
-                    <span class="skill-icon">💻</span>JavaScript
-                </div>
-                <div class="skill-item">
-                    <span class="skill-icon">🎨</span>HTML/CSS
-                </div>
-                <div class="skill-item">
-                    <span class="skill-icon">🗄️</span>MySQL
-                </div>
-                <div class="skill-item">
-                    <span class="skill-icon">📦</span>Docker
-                </div>
-                <div class="skill-item">
-                    <span class="skill-icon">🚢</span>Kubernetes
-                </div>
-                <div class="skill-item">
-                    <span class="skill-icon">🐝</span>Swarm
-                </div>
-                <div class="skill-item">
-                    <span class="skill-icon">🤖</span>Gemini AI
-                </div>
-                <div class="skill-item">
-                    <span class="skill-icon">⚙️</span>Gunicorn
-                </div>
-            </div>
-        </section>
+            </section>
 
-        <section class="experience section-hidden">
-            <h2>Experience</h2>
-            <div class="timeline">
-                <div class="item-card">
-                    <h3>Package App Development Intern</h3>
-                    <h4>Accenture | Dec. 2024 - June 2025</h4>
-                    <ul>
-                        <li>Gained hands-on experience in backend development by learning and implementing REST APIs.</li>
-                        <li>Worked on a banking domain project as part of the Automation Team, contributing to the development of an internal tool.</li>
-                        <li>Collaborated with cross-functional teams, enhancing my understanding of business workflows and client interactions.</li>
-                    </ul>
+            <section class="experience">
+                <h2>Experience</h2>
+                <div class="timeline">
+                    <div class="item-card">
+                        <h3>Package App Development Intern</h3>
+                        <h4>Accenture | Dec. 2024 - June 2025</h4>
+                        <ul>
+                            <li>Gained hands-on experience in backend development by learning and implementing REST APIs.</li>
+                            <li>Worked on a banking domain project as part of the Automation Team, contributing to the development of an internal tool.</li>
+                            <li>Collaborated with cross-functional teams, enhancing my understanding of business workflows and client interactions.</li>
+                        </ul>
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <section class="projects section-hidden">
-            <h2>Projects</h2>
-            <div class="projects-grid">
-                <div class="item-card">
-                    <h3>AI Productivity Studio</h3>
-                    <p class="project-tags">Python, Gemini AI API, Flask, Gunicorn, Docker</p>
+            <section class="projects">
+                <h2>Projects</h2>
+                <div class="projects-grid">
+                    <div class="item-card project-pop-up" data-title="AI Productivity Studio" data-tags="Python, Gemini AI API, Flask, Gunicorn, Docker" data-details="A full-stack Flask app with three distinct tools: a story generator, an email generator, and a PDF analyzer. The project features a responsive UI, voice input, and was deployed using Render and Gunicorn.">
+                        <h3>AI Productivity Studio</h3>
+                        <p class="project-tags">Python, Gemini AI API, Flask, Gunicorn, Docker</p>
+                    </div>
+                    <div class="item-card project-pop-up" data-title="Courier Management System" data-tags="Python, Flask, React, MySQL" data-details="Developed a web-based system to streamline logistics, featuring modules for customer management, delivery scheduling, and real-time shipment tracking.">
+                        <h3>Courier Management System</h3>
+                        <p class="project-tags">Python, Flask, React, MySQL</p>
+                    </div>
+                    <div class="item-card project-pop-up" data-title="Automated Tool to Assist Programmers" data-tags="Python, Flask, MySQL, Machine Learning" data-details="A tool that integrates with online code editors to provide Python error detection and correction. It includes gamified elements to foster learning and engagement.">
+                        <h3>Automated Tool to Assist Programmers</h3>
+                        <p class="project-tags">Python, Flask, MySQL, Machine Learning</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="contact">
+                <h2>Contact</h2>
+                <div class="contact-info">
                     <p>
-                        A full-stack Flask app with three distinct tools: a story generator, an email generator, and a PDF analyzer. The project features a responsive UI, voice input, and was deployed using Render and Gunicorn.
+                        I'm currently seeking a full-time position as a software developer. Feel free to connect with me!
+                    </p>
+                    <p>
+                        Email: <a href="mailto:sanathgbpp2003@gmail.com">sanathgbpp2003@gmail.com</a>
+                    </p>
+                    <p>
+                        LinkedIn: <a href="https://linkedin.com/in/sanathyergol">linkedin.com/in/sanathyergol</a>
+                    </p>
+                    <p>
+                        GitHub: <a href="https://github.com/sanath3000">github.com/sanath3000</a>
                     </p>
                 </div>
-                <div class="item-card">
-                    <h3>Courier Management System</h3>
-                    <p class="project-tags">Python, Flask, React, MySQL</p>
-                    <p>
-                        Developed a web-based system to streamline logistics, featuring modules for customer management, delivery scheduling, and real-time shipment tracking.
-                    </p>
-                </div>
-                <div class="item-card">
-                    <h3>Automated Tool to Assist Programmers</h3>
-                    <p class="project-tags">Python, Flask, MySQL, Machine Learning</p>
-                    <p>
-                        A tool that integrates with online code editors to provide Python error detection and correction. It includes gamified elements to foster learning and engagement.
-                    </p>
-                </div>
-            </div>
-        </section>
+            </section>
+        </main>
+    </div>
 
-        <section class="contact section-hidden">
-            <h2>Contact</h2>
-            <div class="contact-info">
-                <p>
-                    I'm currently seeking a full-time position as a software developer. Feel free to connect with me!
-                </p>
-                <p>
-                    Email: <a href="mailto:sanathgbpp2003@gmail.com">sanathgbpp2003@gmail.com</a>
-                </p>
-                <p>
-                    LinkedIn: <a href="https://linkedin.com/in/sanathyergol">linkedin.com/in/sanathyergol</a>
-                </p>
-                <p>
-                    GitHub: <a href="https://github.com/sanath3000">github.com/sanath3000</a>
-                </p>
-            </div>
-        </section>
+    <div id="projectModal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close-btn">&times;</button>
+            <h3 id="modalTitle"></h3>
+            <p id="modalTags"></p>
+            <p id="modalDetails"></p>
+        </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const sections = document.querySelectorAll('section');
+            const sections = document.querySelectorAll('main section');
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('section-visible');
-                        entry.target.classList.remove('section-hidden');
                     } else {
                         entry.target.classList.remove('section-visible');
-                        entry.target.classList.add('section-hidden');
                     }
                 });
             }, { threshold: 0.1 });
 
             sections.forEach(section => {
                 observer.observe(section);
+            });
+            
+            const headerTextElement = document.getElementById('headerText');
+            const headerDescriptionElement = document.getElementById('headerDescription');
+            const profilePhoto = document.querySelector('.profile-photo');
+            profilePhoto.style.opacity = '1';
+
+            const targetText = "Sanath Yergol";
+            const targetDescription = "Enthusiastic in DevOps and Cloud | 2025 CSE Graduate | Docker";
+            let i = 0;
+            let j = 0;
+            
+            function typeWriter() {
+    headerTextElement.classList.add('typing');  // cursor + visible
+    if (i < targetText.length) {
+        headerTextElement.textContent += targetText.charAt(i);
+        i++;
+        setTimeout(typeWriter, 100);
+    } else {
+        headerTextElement.classList.add('typing-complete');
+        setTimeout(typeWriter2, 500);
+    }
+}
+
+function typeWriter2() {
+    headerDescriptionElement.classList.add('typing');  // cursor + visible
+    if (j < targetDescription.length) {
+        headerDescriptionElement.textContent += targetDescription.charAt(j);
+        j++;
+        setTimeout(typeWriter2, 50);
+    } else {
+        headerDescriptionElement.classList.add('typing-complete');
+    }
+}
+
+            typeWriter();
+
+            const skillsSection = document.querySelector('.skills');
+            const skillItems = document.querySelectorAll('.skill-item');
+
+            const skillsObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        skillItems.forEach((item, index) => {
+                            setTimeout(() => {
+                                item.classList.add('show');
+                            }, index * 200);
+                        });
+                    } else {
+                        skillItems.forEach(item => {
+                            item.classList.remove('show');
+                        });
+                    }
+                });
+            }, { threshold: 0.3 });
+
+            skillsObserver.observe(skillsSection);
+            
+            const projectCards = document.querySelectorAll('.project-pop-up');
+            const modalOverlay = document.getElementById('projectModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalTags = document.getElementById('modalTags');
+            const modalDetails = document.getElementById('modalDetails');
+            const modalCloseBtn = document.querySelector('.modal-close-btn');
+
+            projectCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    modalTitle.textContent = card.dataset.title;
+                    modalTags.textContent = card.dataset.tags;
+                    modalDetails.textContent = card.dataset.details;
+                    modalOverlay.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                });
+            });
+
+            modalCloseBtn.addEventListener('click', () => {
+                modalOverlay.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            });
+            
+            modalOverlay.addEventListener('click', (event) => {
+                if(event.target === modalOverlay) {
+                    modalOverlay.classList.remove('active');
+                    document.body.style.overflow = 'auto';
+                }
             });
         });
     </script>
